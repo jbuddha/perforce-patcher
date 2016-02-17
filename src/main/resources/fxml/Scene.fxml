@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<!--
+<AnchorPane id="AnchorPane" prefHeight="200" prefWidth="320" xmlns:fx="http://javafx.com/fxml" fx:controller="org.buddha.perforce.patch.util.FXMLController">
+    <children>
+        <Button layoutX="126" layoutY="90" text="Click Me!" onAction="#handleButtonAction" fx:id="button" />
+        <Label layoutX="126" layoutY="120" minHeight="16" minWidth="69" fx:id="label" />
+    </children>
+</AnchorPane>
+-->
+<GridPane fx:controller="org.buddha.perforce.patch.util.FXMLController" 
+    xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+<padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
+    
+    <HBox spacing="10" alignment="TOP_CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2" >
+        <Text text="Sign In" fx:id="info" />
+    </HBox>
+    
+    <Label text="Server:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+    <TextField fx:id="p4PortField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+	
+    <Label text="User Name:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+    <TextField fx:id="userNameField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+ 
+    <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+    <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    
+    <HBox spacing="10" alignment="bottom_right" GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <Button text="Sign In" fx:id="signInButton"  onAction="#handleSignInButtonAction"/>
+    </HBox>
+    
+    <Label text="Changelist ID:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+ 
+    <PasswordField fx:id="changeListIdField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+    
+    <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="6">
+        <Button text="Generate Patch" fx:id="generatePatchButton"  onAction="#handleGeneratePatchButtonAction"/>
+    </HBox>
+	
+    
+
+    <Text fx:id="actiontarget"
+               GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+</GridPane>
+
