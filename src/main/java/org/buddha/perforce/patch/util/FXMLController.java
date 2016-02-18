@@ -96,7 +96,8 @@ public class FXMLController implements Initializable {
         changeListIdField.setDisable(true);
         generatePatchButton.setDisable(true);
         info.setText("Sign In");
-        
+        p4PortField.setText("public.perforce.com:1666");
+		userNameField.setText("");
         userNameField.requestFocus();
     }    
 }
