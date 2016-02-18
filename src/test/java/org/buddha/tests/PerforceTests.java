@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.buddha.perforce.patch.P4Manager;
+import org.buddha.temp.TempConfig;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,10 +34,10 @@ public class PerforceTests {
 	@Test
 	public void helloPerforce() throws Exception
 	{
-		IServer server = P4Manager.connect("public.perforce.com:1666","jbuddha","ahdaruna");
+		IServer server = P4Manager.connect(TempConfig.P4PORT,TempConfig.P4USER,TempConfig.P4PASSWORD);
 		//System.out.println(P4Manager.isWorkspacePresent("jbuddha"));
 		
-		server.setCurrentClient(server.getClient("jbuddha"));
+		server.setCurrentClient(server.getClient(TempConfig.P4CLIENT));
 		List<IFileSpec> files = server.getChangelistFiles(18169);
 		for(IFileSpec fileSpec: files) {
 			

@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import org.buddha.perforce.patch.P4Manager;
+import org.buddha.temp.TempConfig;
 
 public class FXMLController implements Initializable {
     
@@ -96,8 +97,8 @@ public class FXMLController implements Initializable {
         changeListIdField.setDisable(true);
         generatePatchButton.setDisable(true);
         info.setText("Sign In");
-        p4PortField.setText("public.perforce.com:1666");
-		userNameField.setText("");
+        p4PortField.setText(TempConfig.P4PORT);
+		userNameField.setText(TempConfig.P4USER);
         userNameField.requestFocus();
     }    
 }
