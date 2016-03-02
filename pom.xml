@@ -11,7 +11,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mainClass>org.buddha.perforce.patch.util.MainApp</mainClass>
+        <mainClass>org.buddha.perforce.patch.fx.MainApp</mainClass>
     </properties>
 
     <organization>

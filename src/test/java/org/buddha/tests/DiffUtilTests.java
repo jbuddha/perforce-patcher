@@ -5,9 +5,7 @@ import difflib.Patch;
 import java.util.ArrayList;
 import java.util.List;
 import junit.framework.Assert;
-import org.buddha.perforce.patch.DiffUtil;
-import org.buddha.perforce.patch.LineAction;
-import org.buddha.perforce.patch.LineDiff;
+
 import org.junit.Test;
 
 /**

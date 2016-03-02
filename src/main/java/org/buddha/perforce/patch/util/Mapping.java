@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.buddha.perforce.patch;
+package org.buddha.perforce.patch.util;
 
 import com.perforce.p4java.client.IClient;
 import com.perforce.p4java.client.IClientViewMapping;
@@ -37,9 +37,9 @@ public final class Mapping {
                      .replace("...",""));
     }
 
-    public String findLocalPath(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public String findLocalPath(String remotePath) {
+		return findRight(remotePath);
+	}
 
     public String findLeft(String remotePath) {
         int len = 0;

@@ -1,5 +1,7 @@
-package org.buddha.perforce.patch.util;
+package org.buddha.perforce.patch.fx;
 
+import java.util.prefs.Preferences;
+import static java.util.prefs.Preferences.userNodeForPackage;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.event.EventHandler;
@@ -8,7 +10,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.buddha.perforce.patch.P4Manager;
+import org.buddha.perforce.patch.util.P4Manager;
+import org.buddha.perforce.patch.Config;
 
 
 public class MainApp extends Application {
@@ -16,12 +19,13 @@ public class MainApp extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
-        
+		
         Scene scene = new Scene(root);
         scene.getStylesheets().add("/styles/Styles.css");
         
         stage.setTitle("P4 Patchy");
         stage.setScene(scene);
+		stage.setResizable(false);
         stage.show();
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override

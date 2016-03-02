@@ -18,9 +18,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import org.buddha.perforce.patch.Mapping;
-import org.buddha.perforce.patch.P4Manager;
-import org.buddha.temp.TempConfig;
+import org.buddha.perforce.patch.util.Mapping;
+import org.buddha.perforce.patch.util.P4Manager;
+import org.buddha.perforce.patch.Config;
 import org.junit.Assert;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -38,9 +38,9 @@ public class PerforceTests {
     
     @Before
     public void before() throws Exception{
-        server = P4Manager.connect(TempConfig.P4PORT,TempConfig.P4USER,TempConfig.P4PASSWORD);
-        server.setCurrentClient(server.getClient(TempConfig.P4CLIENT));
-        client = server.getClient(TempConfig.P4CLIENT);
+        server = P4Manager.connect(Config.P4PORT,Config.P4USER,Config.P4PASSWORD);
+        server.setCurrentClient(server.getClient(Config.P4CLIENT));
+        client = server.getClient(Config.P4CLIENT);
     }
 
     @Test
@@ -48,10 +48,10 @@ public class PerforceTests {
     public void getFiles() throws Exception
     {
         
-        List<IFileSpec> files = server.getChangelistFiles(TempConfig.P4CHANGELIST);
+        List<IFileSpec> files = server.getChangelistFiles(Config.P4CHANGELIST);
         for(IFileSpec fileSpec: files) {
             System.out.println(fileSpec.getPath(FilePath.PathType.DEPOT));
-
+			
             try (InputStream in = fileSpec.getContents(true); 
                  BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
                 String line;
@@ -85,9 +85,9 @@ public class PerforceTests {
             assertTrue(localPath.endsWith("/projspec.xml"));
            // Assert.assertEquals(home+mapping.getRight().replace("//"+home, localPath),localPath);
         }
-      //  List<IFileSpec> files = server.getChangelistFiles(TempConfig.P4CHANGELIST);
+      //  List<IFileSpec> files = server.getChangelistFiles(Config.P4CHANGELIST);
 //        List<IFileSpec> files = FileSpecBuilder.makeFileSpecList("//product/BCC/main/.project");
-//        List<IExtendedFileSpec> extendedFiles = server.getExtendedFiles(files, -1, TempConfig.P4CHANGELIST, -1, null,null);
+//        List<IExtendedFileSpec> extendedFiles = server.getExtendedFiles(files, -1, Config.P4CHANGELIST, -1, null,null);
 
         
        } finally {

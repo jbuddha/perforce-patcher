@@ -1,4 +1,4 @@
-package org.buddha.perforce.patch;
+package org.buddha.perforce.patch.util;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -10,14 +10,26 @@ import com.perforce.p4java.client.IClientViewMapping;
 import com.perforce.p4java.client.IClientSummary.IClientOptions;
 import com.perforce.p4java.core.IChangelist;
 import com.perforce.p4java.core.IMapEntry.EntryType;
+import static com.perforce.p4java.core.file.FileAction.ADD;
 import com.perforce.p4java.core.file.FileSpecBuilder;
+import com.perforce.p4java.core.file.IFileSpec;
 import com.perforce.p4java.exception.*;
 import com.perforce.p4java.impl.generic.client.ClientOptions;
 import com.perforce.p4java.impl.generic.client.ClientView;
 import com.perforce.p4java.impl.generic.client.ClientView.ClientViewMapping;
 import com.perforce.p4java.impl.generic.core.Changelist;
+import com.perforce.p4java.impl.generic.core.file.FilePath;
 import com.perforce.p4java.impl.mapbased.client.Client;
 import com.perforce.p4java.server.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+import org.buddha.perforce.patch.Config;
+import static java.util.prefs.Preferences.userNodeForPackage;
+import org.buddha.perforce.patch.fx.MainApp;
 
 public class P4Manager {
 
@@ -25,29 +37,46 @@ public class P4Manager {
 	
 	public static IServer server = null;
 	
+	private static String p4Port, username, password; 
+	private static Preferences prefs = userNodeForPackage(MainApp.class);
+	
 	public static synchronized IServer connect(String p4Port, String username, String password) throws Exception {
-            if(server != null) 
-                    return server;
+		if(server != null) 
+				return server;
+		
+		P4Manager.p4Port = p4Port;
+		P4Manager.username = username;
+		P4Manager.password = password;
+		
+		if(!p4Port.startsWith("p4java://"))
+				p4Port = "p4java://" + p4Port;
 
-            if(!p4Port.startsWith("p4java://"))
-                    p4Port = "p4java://" + p4Port;
-
-            server = ServerFactory.getServer(p4Port, null); 
-            server.connect();
-            server.setUserName(username);
-            server.login(password);
-            return server;
+		server = ServerFactory.getServer(p4Port, null); 
+		server.connect();
+		server.setUserName(username);
+		server.login(password);
+		
+		
+		if(P4Manager.p4Port != null)
+			prefs.put(Config.P4PORT_KEY, P4Manager.p4Port);
+		if(P4Manager.username != null)
+			prefs.put(Config.P4USER_KEY, P4Manager.username);
+		if(P4Manager.password != null)
+			prefs.put(Config.P4PASSWORD_KEY, P4Manager.password);
+		
+		prefs.sync();
+		return server;
 	}
 	
 	public static void disconnect(){
-            try {
-                if(server != null){
-                        server.logout();
-                        server.disconnect();
-                }
-            } catch (ConnectionException | RequestException | AccessException | ConfigException e) {
-                e.printStackTrace();
-            }
+		try {
+			if(server != null){
+					server.logout();
+					server.disconnect();
+			}
+		} catch (ConnectionException | RequestException | AccessException | ConfigException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static ClientView getDepotView(String workspace) throws ConnectionException, RequestException, AccessException{
@@ -55,8 +84,14 @@ public class P4Manager {
 		return client.getClientView();
 	}
 	
-	public static IClient getClient(String workspace) throws ConnectionException, RequestException, AccessException{
-		return P4Manager.server.getClient(workspace);
+	public static IClient getClient(String workspace) throws ConnectionException, RequestException, AccessException, BackingStoreException{
+		IClient client = P4Manager.server.getClient(workspace);
+		if(client != null) {
+			server.setCurrentClient(client);
+			prefs.put(Config.P4CLIENT_KEY, workspace);
+			prefs.sync();
+		}
+		return client;
 	}
 	
 	public static synchronized boolean isWorkspacePresent(String workspace) throws ConnectionException, RequestException, AccessException{
@@ -127,5 +162,46 @@ public class P4Manager {
 		CL.setId(clId);
 		CL.setServer(P4Manager.server);
 		workspace.editFiles(FileSpecBuilder.makeFileSpecList(Arrays.asList(file)), false, false, CL.getId(), null);
+	}
+	
+	public static List<String> getRemoteContent(IFileSpec fileSpec) throws ConnectionException, RequestException, AccessException, IOException {
+		if(fileSpec.getAction() == ADD)
+			return new ArrayList<>();
+		try (InputStream in = fileSpec.getContents(true); 
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+		   String line;
+		   List<String> lines = new ArrayList<>();
+		   while((line = bufferedReader.readLine()) != null) {
+			   lines.add(line);
+		   }
+		   return lines;
+	    } 
+	}
+	
+	public static List<String> getLocalContent(IFileSpec fileSpec, Mapping map) throws FileNotFoundException, IOException {
+		String localPath = map.findLocalPath(fileSpec.getPath(FilePath.PathType.DEPOT).getPathString());
+		File localFile = new File(localPath);
+		
+		if(!localFile.exists() || !localFile.canRead())
+			return null;
+		
+		try (InputStream in = new FileInputStream(localFile); 
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+		   String line;
+		   List<String> lines = new ArrayList<>();
+		   while((line = bufferedReader.readLine()) != null) {
+			   lines.add(line);
+		   }
+		   return lines;
+	    }
+	}
+	
+	public static List<IFileSpec> getChangelistFiles(int changeListId) throws ConnectionException, RequestException, AccessException, BackingStoreException {
+		List<IFileSpec> changelistFiles = P4Manager.server.getChangelistFiles(changeListId);
+		if(changelistFiles != null) {
+			prefs.putInt(Config.P4CHANGELIST_KEY, changeListId);
+			prefs.sync();
+		}
+		return changelistFiles;
 	}
 }

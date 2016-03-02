@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Text?>
+
 <!--
 <AnchorPane id="AnchorPane" prefHeight="200" prefWidth="320" xmlns:fx="http://javafx.com/fxml" fx:controller="org.buddha.perforce.patch.util.FXMLController">
     <children>
@@ -13,42 +21,54 @@
     </children>
 </AnchorPane>
 -->
-<GridPane fx:controller="org.buddha.perforce.patch.util.FXMLController" 
-    xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
-<padding><Insets top="25" right="25" bottom="10" left="25"/></padding>
+
+<GridPane alignment="center" hgap="10" prefHeight="325.0" prefWidth="313.0" vgap="10" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.buddha.perforce.patch.fx.FXMLController">
+<padding><Insets bottom="10" left="25" right="25" top="25" /></padding>
     
-    <HBox spacing="10" alignment="TOP_CENTER" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2" >
-        <Text text="Sign In" fx:id="info" />
+    <HBox alignment="TOP_CENTER" spacing="10" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0">
+        <Text fx:id="info" text="Sign In" />
     </HBox>
     
-    <Label text="Server:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-    <TextField fx:id="p4PortField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    <Label text="Server:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+    <TextField fx:id="p4PortField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 	
-    <Label text="User Name:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-    <TextField fx:id="userNameField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    <Label text="User Name:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+    <TextField fx:id="userNameField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
  
-    <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-    <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    <Label text="Password:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+    <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
     
-    <HBox spacing="10" alignment="bottom_right" GridPane.columnIndex="1" GridPane.rowIndex="4">
-        <Button text="Sign In" fx:id="signInButton"  onAction="#handleSignInButtonAction"/>
+    <HBox alignment="bottom_right" spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <Button fx:id="signInButton" onAction="#handleSignInButtonAction" text="Sign In" />
     </HBox>
     
-    <Label text="Workspace:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
- 
-    <TextField fx:id="workSpaceField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
-    
-    <Label text="Changelist ID:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
- 
-    <TextField fx:id="changeListIdField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
-    
+    <Label text="Workspace:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+    <ComboBox fx:id="workspaceField" editable="true" prefHeight="27.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+    <Label text="Changelist ID:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+    <ComboBox fx:id="changeListField" editable="true" prefHeight="27.0" prefWidth="167.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
     <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="7">
-        <Button text="Generate Patch" fx:id="generatePatchButton"  onAction="#handleGeneratePatchButtonAction"/>
+        <Button fx:id="generatePatchButton" onAction="#handleGeneratePatchButtonAction" text="Generate Patch" />
     </HBox>
 	
     
 
-    <Text fx:id="actiontarget"
-               GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+    <Text fx:id="actiontarget" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+   <ProgressBar fx:id="progressField" prefHeight="20.0" prefWidth="167.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
 </GridPane>
-
