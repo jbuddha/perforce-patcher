@@ -1,17 +1,14 @@
 package org.buddha.perforce.patch.util;
 
+import com.perforce.p4java.server.IServer;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import org.buddha.perforce.patch.P4Manager;
@@ -43,6 +40,8 @@ public class FXMLController implements Initializable {
     @FXML
     private Button generatePatchButton;
     
+    private IServer server;
+    
     @FXML
     private void handleSignInButtonAction(ActionEvent event) {
         try {
@@ -57,7 +56,7 @@ public class FXMLController implements Initializable {
                 public Void call() throws InterruptedException {
                     updateMessage("Logging In");
                     try {
-                        P4Manager.connect(p4PortField.getText(), userNameField.getText(), passwordField.getText());
+                        server = P4Manager.connect(p4PortField.getText(), userNameField.getText(), passwordField.getText());
                         updateMessage("Login Success"); 
                         changeListIdField.setDisable(false);
                         generatePatchButton.setDisable(false);
@@ -85,7 +84,7 @@ public class FXMLController implements Initializable {
     
     @FXML
     private void handleGeneratePatchButtonAction(ActionEvent event){
-        
+//        client = 
     }
     
     @Override
@@ -98,7 +97,7 @@ public class FXMLController implements Initializable {
         generatePatchButton.setDisable(true);
         info.setText("Sign In");
         p4PortField.setText(TempConfig.P4PORT);
-		userNameField.setText(TempConfig.P4USER);
+        userNameField.setText(TempConfig.P4USER);
         userNameField.requestFocus();
     }    
 }

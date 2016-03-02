@@ -34,9 +34,13 @@
         <Button text="Sign In" fx:id="signInButton"  onAction="#handleSignInButtonAction"/>
     </HBox>
     
-    <Label text="Changelist ID:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+    <Label text="Workspace:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
  
-    <PasswordField fx:id="changeListIdField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+    <TextField fx:id="workSpaceField" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+    
+    <Label text="Changelist ID:" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+ 
+    <TextField fx:id="changeListIdField" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
     
     <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="6">
         <Button text="Generate Patch" fx:id="generatePatchButton"  onAction="#handleGeneratePatchButtonAction"/>

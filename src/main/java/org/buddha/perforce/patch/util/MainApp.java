@@ -24,11 +24,11 @@ public class MainApp extends Application {
         stage.setScene(scene);
         stage.show();
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-          @Override
-          public void handle(WindowEvent we) {
-              P4Manager.disconnect();
-          }
-      });      
+            @Override
+            public void handle(WindowEvent we) {
+               P4Manager.disconnect();
+            }
+        });      
     }
 
     /**
