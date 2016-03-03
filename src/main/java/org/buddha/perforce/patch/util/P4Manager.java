@@ -24,7 +24,6 @@ import com.perforce.p4java.impl.mapbased.client.Client;
 import com.perforce.p4java.server.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;

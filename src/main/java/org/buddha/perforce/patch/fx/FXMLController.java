@@ -9,37 +9,50 @@ import com.perforce.p4java.impl.generic.core.file.FilePath;
 import com.perforce.p4java.server.IServer;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import static java.util.prefs.Preferences.userNodeForPackage;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
+import javafx.scene.control.TitledPane;
 import javafx.stage.FileChooser;
 import org.buddha.perforce.patch.Item;
 import org.buddha.perforce.patch.util.Mapping;
 import org.buddha.perforce.patch.util.P4Manager;
 import org.buddha.perforce.patch.Config;
+import org.buddha.perforce.patch.util.StringUtils;
 import static org.buddha.perforce.patch.util.StringUtils.concatItems;
 
 public class FXMLController implements Initializable {
 
     @FXML
-    private Text info;
+    private Accordion accordion;
 
     @FXML
-    private Text actiontarget;
+    private TitledPane connectPane;
+
+    @FXML
+    private TitledPane generatePane;
+
+    @FXML
+    private TitledPane logPane;
 
     @FXML
     private TextField p4PortField;
@@ -54,16 +67,16 @@ public class FXMLController implements Initializable {
     private Button signInButton;
 
     @FXML
-    private ComboBox workspaceField;
+    private TextField workspaceField;
 
     @FXML
-    private ComboBox changeListField;
+    private TextField changeListField;
 
     @FXML
     private Button generatePatchButton;
 
     @FXML
-    private ProgressBar progressField;
+    private TextArea console;
 
     private IServer server;
     private IClient client;
@@ -71,37 +84,35 @@ public class FXMLController implements Initializable {
     List<Item> items;
 
     @FXML
-    private void handleSignInButtonAction(ActionEvent event) {
+    private void handleSignInButtonAction(ActionEvent event) throws InterruptedException {
         try {
             worker = createLoginWorker();
-            progressField.progressProperty().unbind();
-        
-            progressField.progressProperty().bind(worker.progressProperty());
-            info.textProperty().bind(worker.messageProperty());
-
+            worker.messageProperty().addListener(loggerListener());
             Thread thread = new Thread(worker);
             thread.setDaemon(true);
             thread.start();
         } catch (Exception e) {
-            e.printStackTrace();
-            info.setText("Login Failed");
+            console.appendText(StringUtils.exceptionToString(e));
         }
     }
 
     @FXML
     private void handleGeneratePatchButtonAction(ActionEvent event) throws ConnectionException, RequestException, AccessException, InterruptedException {
         worker = createPatchWorker();
-
-        progressField.progressProperty().unbind();
-        generatePatchButton.disableProperty().unbind();
-        info.textProperty().unbind();
-        
-        progressField.progressProperty().bind(worker.progressProperty());
-        info.textProperty().bind(worker.messageProperty());
-        generatePatchButton.disableProperty().bind(worker.runningProperty());
-
+        worker.messageProperty().addListener(loggerListener());
         new Thread(worker).start();
+    }
 
+    private ChangeListener<String> loggerListener() {
+        return new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                accordion.setExpandedPane(logPane);
+                synchronized (FXMLController.class) {
+                    console.appendText(t1 + System.lineSeparator());
+                }
+            }
+        };
     }
 
     @Override
@@ -112,7 +123,7 @@ public class FXMLController implements Initializable {
         Config.P4PASSWORD = prefs.get(Config.P4PASSWORD_KEY, "");
         Config.P4CLIENT = prefs.get(Config.P4CLIENT_KEY, "");
         Config.P4PORT = prefs.get(Config.P4PORT_KEY, "");
-
+        accordion.setExpandedPane(connectPane);
         signInButton.disableProperty().bind(Bindings.equal("", p4PortField.textProperty())
                 .or(Bindings.equal("", userNameField.textProperty()))
                 .or(Bindings.equal("", passwordField.textProperty()))
@@ -120,64 +131,67 @@ public class FXMLController implements Initializable {
         changeListField.setDisable(true);
         workspaceField.setDisable(true);
         generatePatchButton.setDisable(true);
-        info.setText("Sign In");
         p4PortField.setText(Config.P4PORT);
         userNameField.setText(Config.P4USER);
         passwordField.setText(Config.P4PASSWORD);
-        userNameField.requestFocus();
     }
 
     public Task createPatchWorker() {
         return new Task() {
-            
+
             @Override
             protected void succeeded() {
-                info.textProperty().unbind();
-                generatePatchButton.disableProperty().unbind();
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setInitialFileName(Config.P4CHANGELIST + ".diff");
+                fileChooser.setTitle("Save Patch");
+                File file = fileChooser.showSaveDialog(Config.STAGE);
+                String out = concatItems(items, System.lineSeparator() + System.lineSeparator());
+                if (file != null) {
+                    try (FileWriter writer = new FileWriter(file)) {
+                        writer.write(out);
+                        updateMessage("Patch Generated");
+                    } catch (IOException ex) {
+                        StringWriter writer = new StringWriter();
+                        ex.printStackTrace(new PrintWriter(writer));
+                        updateMessage(writer.toString());
+                    }
+                } else {
+                    updateMessage("Patch Cancelled");
+                }
             }
-            
+
             @Override
             protected Object call() {
                 try {
-                    updateMessage("Fetching Workspace");
-                    client = P4Manager.getClient(workspaceField.getValue().toString());
+                    updateMessage("Fetching Workspace: " + workspaceField.getText());
+                    client = P4Manager.getClient(workspaceField.getText());
                     updateProgress(0.1, 1.0);
-                    
+
                     Mapping map = new Mapping(client);
                     items = new ArrayList<>();
                     updateMessage("Gathering Files");
-                    List<IFileSpec> files = P4Manager.getChangelistFiles(Integer.parseInt(changeListField.getValue().toString()));
+                    List<IFileSpec> files = P4Manager.getChangelistFiles(Integer.parseInt(changeListField.getText()));
                     updateProgress(0.2, 1.0);
                     double d = 0.7 / files.size();
                     double p = 0.2;
                     updateMessage("Collecting Revisions");
                     for (IFileSpec fileSpec : files) {
-//                        String[] pathStrings = fileSpec.getPath(FilePath.PathType.DEPOT).getPathString().split("/");
-//                        updateMessage("Analysing: " + pathStrings[pathStrings.length - 1]);
+                        String[] pathStrings = fileSpec.getPath(FilePath.PathType.DEPOT).getPathString().split("/");
+                        updateMessage("Analysing: " + pathStrings[pathStrings.length - 1]);
                         Item item = new Item(fileSpec, map);
                         items.add(item);
                         p += d;
                         updateProgress(p, 1.0);
                     }
-                    
                     updateMessage("Comparing Revisions");
-                    Thread.sleep(1000);
-                    String out = concatItems(items, System.lineSeparator()+System.lineSeparator());
-                    FileChooser fileChooser = new FileChooser();
-                    fileChooser.setInitialFileName(Config.P4CHANGELIST + ".diff");
-                    fileChooser.setTitle("Save Patch");
-                    File file = fileChooser.showSaveDialog(Config.STAGE);
-                    try (FileWriter writer = new FileWriter(file)) {
-                        
-                        writer.write(out);
-                        updateMessage("Patch Generated");
-                    }
                     updateProgress(1.0, 1.0);
                     return true;
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                } catch (ConnectionException | RequestException | AccessException | BackingStoreException | NumberFormatException | IOException ex) {
+                    StringWriter writer = new StringWriter();
+                    ex.printStackTrace(new PrintWriter(writer));
+                    updateMessage(writer.toString());
                 }
-                return true;
+                return false;
             }
         };
     }
@@ -186,12 +200,11 @@ public class FXMLController implements Initializable {
         return new Task() {
             @Override
             protected void succeeded() {
-                info.textProperty().unbind();
-                progressField.progressProperty().unbind();
+                accordion.setExpandedPane(generatePane);
             }
 
             @Override
-            public Void call() throws InterruptedException {
+            public Void call() {
                 updateMessage("Logging In");
                 updateProgress(5, 10);
                 try {
@@ -203,18 +216,16 @@ public class FXMLController implements Initializable {
                         public void run() {
                             changeListField.setDisable(false);
                             workspaceField.setDisable(false);
-                            workspaceField.setValue(Config.P4CLIENT);
-                            changeListField.setValue(Config.P4CHANGELIST);
+                            workspaceField.setText(Config.P4CLIENT);
+                            changeListField.setText("" + Config.P4CHANGELIST);
                             generatePatchButton.setDisable(false);
                             userNameField.setDisable(true);
                             passwordField.setDisable(true);
                             p4PortField.setDisable(true);
                         }
                     });
-
                 } catch (Exception ex) {
-                    ex.printStackTrace();
-                    updateMessage("Login Failed");
+                    updateMessage(StringUtils.exceptionToString(ex));
                     updateProgress(0, 10);
                 }
                 return null;

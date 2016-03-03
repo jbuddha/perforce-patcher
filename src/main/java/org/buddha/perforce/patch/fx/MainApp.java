@@ -1,38 +1,38 @@
 package org.buddha.perforce.patch.fx;
 
-import java.util.prefs.Preferences;
-import static java.util.prefs.Preferences.userNodeForPackage;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.buddha.perforce.patch.util.P4Manager;
 import org.buddha.perforce.patch.Config;
 
-
 public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
-	Config.STAGE = stage;
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Patchy.fxml"));
+        Config.STAGE = stage;
         Scene scene = new Scene(root);
         scene.getStylesheets().add("/styles/Styles.css");
-        
-        stage.setTitle("P4 Patchy");
+        stage.getIcons().add(new Image("/images/logo.png"));
+        stage.setTitle("Perforce Patcher");
         stage.setScene(scene);
-		stage.setResizable(false);
+        stage.setResizable(false);
+        stage.centerOnScreen();
+        
         stage.show();
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent we) {
-               P4Manager.disconnect();
+                P4Manager.disconnect();
             }
-        });      
+        });
     }
 
     /**
