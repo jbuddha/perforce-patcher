@@ -25,7 +25,7 @@
 <GridPane alignment="center" hgap="10" prefHeight="325.0" prefWidth="313.0" vgap="10" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.buddha.perforce.patch.fx.FXMLController">
 <padding><Insets bottom="10" left="25" right="25" top="25" /></padding>
     
-    <HBox alignment="TOP_CENTER" spacing="10" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0">
+    <HBox alignment="TOP_CENTER" spacing="10" GridPane.columnIndex="1" GridPane.columnSpan="1" GridPane.rowIndex="0">
         <Text fx:id="info" text="Sign In" />
     </HBox>
     
@@ -57,8 +57,8 @@
     <Text fx:id="actiontarget" GridPane.columnIndex="1" GridPane.rowIndex="7" />
    <ProgressBar fx:id="progressField" prefHeight="20.0" prefWidth="167.0" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
    <columnConstraints>
-      <ColumnConstraints />
-      <ColumnConstraints />
+      <ColumnConstraints hgrow="NEVER" />
+      <ColumnConstraints hgrow="NEVER" />
    </columnConstraints>
    <rowConstraints>
       <RowConstraints />

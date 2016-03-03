@@ -29,21 +29,21 @@ public class Item {
 	private final List<String> localContent;
 	
 	public Item(IFileSpec fileSpec, Mapping map) throws IOException, ConnectionException, RequestException, AccessException {
-		remotePath = fileSpec.getPath(FilePath.PathType.DEPOT).getPathString();
-		localPath = map.findLocalPath(fileSpec.getPath(FilePath.PathType.DEPOT).getPathString());
-		action = fileSpec.getAction();
-		
-		remoteContent = P4Manager.getRemoteContent(fileSpec);
-		localContent = P4Manager.getLocalContent(fileSpec, map);
+            remotePath = fileSpec.getPath(FilePath.PathType.DEPOT).getPathString();
+            localPath = map.findLocalPath(fileSpec.getPath(FilePath.PathType.DEPOT).getPathString());
+            action = fileSpec.getAction();
+
+            remoteContent = P4Manager.getRemoteContent(fileSpec);
+            localContent = P4Manager.getLocalContent(fileSpec, map);
 	}
 	
 	public List<String> getUnifiedDiff(int context) {
-		Patch<String> diff = DiffUtils.diff(remoteContent, localContent);
-		return DiffUtils.generateUnifiedDiff(remotePath, localPath, remoteContent, diff, context);
+            Patch<String> diff = DiffUtils.diff(remoteContent, localContent);
+            return DiffUtils.generateUnifiedDiff(remotePath, localPath, remoteContent, diff, context);
 	}
 	
 	public List<String> getUnifiedDiff() {
-		return getUnifiedDiff(10);
+            return getUnifiedDiff(10000);
 	}
 
 	@Override
