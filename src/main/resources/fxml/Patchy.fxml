@@ -34,8 +34,8 @@
                      <children>
                         <TextField fx:id="workspaceField" layoutX="107.0" layoutY="55.0" prefHeight="23.0" prefWidth="185.0" />
                         <TextField fx:id="changeListField" layoutX="107.0" layoutY="98.0" prefHeight="23.0" prefWidth="184.0" />
-                        <Label layoutX="40.0" layoutY="58.0" text="Workspace" />
-                        <Label layoutX="38.0" layoutY="101.0" text="Changelist" />
+                        <Label layoutX="26.0" layoutY="58.0" text="Workspace" />
+                        <Label layoutX="26.0" layoutY="103.0" text="Changelist" />
                         <Button fx:id="generatePatchButton" layoutX="27.6" layoutY="157.6" mnemonicParsing="false" onAction="#handleGeneratePatchButtonAction" prefHeight="51.0" prefWidth="292.0" text="Generate Patch" AnchorPane.bottomAnchor="99.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="148.0" />
                      </children>
                   </AnchorPane>
