@@ -27,11 +27,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import org.buddha.perforce.patch.Item;
 import org.buddha.perforce.patch.util.Mapping;
@@ -77,6 +73,9 @@ public class FXMLController implements Initializable {
 
     @FXML
     private TextArea console;
+	
+	@FXML
+	private CheckBox remember;
 
     private IServer server;
     private IClient client;
@@ -101,6 +100,12 @@ public class FXMLController implements Initializable {
         worker = createPatchWorker();
         worker.messageProperty().addListener(loggerListener());
         new Thread(worker).start();
+    }
+	
+	@FXML
+    private void handleRemember(ActionEvent event) throws ConnectionException, RequestException, AccessException, InterruptedException {
+		P4Manager.remember(remember.isSelected());
+		console.appendText("Remember Setting: " + remember.isSelected()+System.lineSeparator());
     }
 
     private ChangeListener<String> loggerListener() {

@@ -35,8 +35,13 @@ public class P4Manager {
 
     private P4Manager() {
     }
+	
+	public static void remember(boolean value) {
+		remember = value;
+	}
 
     public static IServer server = null;
+	public static boolean remember = true;
 
     private static String p4Port, username, password;
     private static Preferences prefs = userNodeForPackage(MainApp.class);
@@ -59,17 +64,19 @@ public class P4Manager {
         server.setUserName(username);
         server.login(password);
 
-        if (P4Manager.p4Port != null) {
-            prefs.put(Config.P4PORT_KEY, P4Manager.p4Port);
-        }
-        if (P4Manager.username != null) {
-            prefs.put(Config.P4USER_KEY, P4Manager.username);
-        }
-        if (P4Manager.password != null) {
-            prefs.put(Config.P4PASSWORD_KEY, P4Manager.password);
-        }
+		if(remember) {
+			if (P4Manager.p4Port != null) {
+				prefs.put(Config.P4PORT_KEY, P4Manager.p4Port);
+			}
+			if (P4Manager.username != null) {
+				prefs.put(Config.P4USER_KEY, P4Manager.username);
+			}
+			if (P4Manager.password != null) {
+				prefs.put(Config.P4PASSWORD_KEY, P4Manager.password);
+			}
 
-        prefs.sync();
+			prefs.sync();
+		}
         return server;
     }
 
@@ -93,8 +100,10 @@ public class P4Manager {
         IClient client = P4Manager.server.getClient(workspace);
         if (client != null) {
             server.setCurrentClient(client);
-            prefs.put(Config.P4CLIENT_KEY, workspace);
-            prefs.sync();
+			if(remember) {
+				prefs.put(Config.P4CLIENT_KEY, workspace);
+				prefs.sync();
+			}
         }
         return client;
     }
@@ -212,8 +221,10 @@ public class P4Manager {
     public static List<IFileSpec> getChangelistFiles(int changeListId) throws ConnectionException, RequestException, AccessException, BackingStoreException {
         List<IFileSpec> changelistFiles = P4Manager.server.getChangelistFiles(changeListId);
         if (changelistFiles != null) {
-            prefs.putInt(Config.P4CHANGELIST_KEY, changeListId);
-            prefs.sync();
+			if(remember) {
+				prefs.putInt(Config.P4CHANGELIST_KEY, changeListId);
+				prefs.sync();
+			}
         }
         return changelistFiles;
     }

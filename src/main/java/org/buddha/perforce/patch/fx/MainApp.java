@@ -1,5 +1,6 @@
 package org.buddha.perforce.patch.fx;
 
+import java.net.URL;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.event.EventHandler;
@@ -9,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javax.swing.ImageIcon;
 import org.buddha.perforce.patch.util.P4Manager;
 import org.buddha.perforce.patch.Config;
 
@@ -25,15 +27,25 @@ public class MainApp extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.centerOnScreen();
-        
+		try {
+			URL iconURL = MainApp.class.getResource("/images/logo.png");
+			java.awt.Image image = new ImageIcon(iconURL).getImage();
+			com.apple.eawt.Application.getApplication().setDockIconImage(image);
+		} catch (Exception e) {
+			// Won't work on Windows or Linux.
+		}
         stage.show();
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent we) {
-                P4Manager.disconnect();
-            }
-        });
+        stage.setOnCloseRequest(createCloseHandler());
     }
+
+	private EventHandler<WindowEvent> createCloseHandler() {
+		return new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent we) {
+				P4Manager.disconnect();
+			}
+		};
+	}
 
     /**
      * The main() method is ignored in correctly deployed JavaFX application.
