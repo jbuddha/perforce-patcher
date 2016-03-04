@@ -15,8 +15,9 @@ import java.util.List;
 import org.buddha.perforce.patch.util.StringUtils;
 
 /**
- * Representation of remote and local files and their contents. Can be used to generate UnifiedDiff.
- * 
+ * Representation of remote and local files and their contents. Can be used to
+ * generate UnifiedDiff.
+ *
  * @author buddha
  */
 public class Item {

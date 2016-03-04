@@ -7,7 +7,7 @@ import org.buddha.perforce.patch.Item;
 
 /**
  * Reusable utilities
- * 
+ *
  * @author jbuddha
  */
 public class StringUtils {

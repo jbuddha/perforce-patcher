@@ -38,20 +38,20 @@ public class MainApp extends Application {
             m2.invoke(o, image);
             //com.apple.eawt.Application.getApplication().setDockIconImage(image);
         } catch (Exception e) {
-                // Won't work on Windows or Linux.
+            // Won't work on Windows or Linux.
         }
         stage.show();
         stage.setOnCloseRequest(createCloseHandler());
     }
 
-	private EventHandler<WindowEvent> createCloseHandler() {
-		return new EventHandler<WindowEvent>() {
-			@Override
-			public void handle(WindowEvent we) {
-				P4Manager.disconnect();
-			}
-		};
-	}
+    private EventHandler<WindowEvent> createCloseHandler() {
+        return new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent we) {
+                P4Manager.disconnect();
+            }
+        };
+    }
 
     /**
      * The main() method is ignored in correctly deployed JavaFX application.

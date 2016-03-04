@@ -4,7 +4,7 @@ import javafx.stage.Stage;
 
 /**
  * Holder for configuration information
- * 
+ *
  * @author jbuddha
  */
 public class Config {

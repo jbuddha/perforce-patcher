@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * Mapping of perforce workspace mappings. Can be used to find local file path.
- * 
+ *
  * @author jbuddha
  */
 public final class Mapping {
