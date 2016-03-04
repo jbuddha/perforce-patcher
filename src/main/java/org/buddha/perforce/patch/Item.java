@@ -40,7 +40,8 @@ public class Item {
 
     public List<String> getUnifiedDiff(int context) {
         Patch<String> diff = DiffUtils.diff(remoteContent, localContent);
-        return DiffUtils.generateUnifiedDiff(remotePath, localPath, remoteContent, diff, context);
+        // purposefully setting local path also as remote path
+        return DiffUtils.generateUnifiedDiff(remotePath, remotePath, remoteContent, diff, context);
     }
 
     public List<String> getUnifiedDiff() {

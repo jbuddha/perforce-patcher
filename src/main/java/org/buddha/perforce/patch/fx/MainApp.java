@@ -1,5 +1,6 @@
 package org.buddha.perforce.patch.fx;
 
+import java.lang.reflect.Method;
 import java.net.URL;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -27,13 +28,18 @@ public class MainApp extends Application {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.centerOnScreen();
-		try {
-			URL iconURL = MainApp.class.getResource("/images/logo.png");
-			java.awt.Image image = new ImageIcon(iconURL).getImage();
-			com.apple.eawt.Application.getApplication().setDockIconImage(image);
-		} catch (Exception e) {
-			// Won't work on Windows or Linux.
-		}
+        try {
+            URL iconURL = MainApp.class.getResource("/images/logo.png");
+            java.awt.Image image = new ImageIcon(iconURL).getImage();
+            Class clazz1 = Class.forName("com.apple.eawt.Application");
+            Method method = clazz1.getMethod("getApplication", null);
+            Object o = method.invoke(clazz1, null);
+            Method m2 = o.getClass().getMethod("setDockIconImage", java.awt.Image.class);
+            m2.invoke(o, image);
+            //com.apple.eawt.Application.getApplication().setDockIconImage(image);
+        } catch (Exception e) {
+                // Won't work on Windows or Linux.
+        }
         stage.show();
         stage.setOnCloseRequest(createCloseHandler());
     }

@@ -206,8 +206,12 @@ public class FXMLController implements Initializable {
 			protected void succeeded() {
 				if(getProgress() > 0.1) {
 					accordion.setExpandedPane(generatePane);
-					connectPane.setText("Connect - Failed");
 				}
+                                else {
+                                    connectPane.setText("Connect - Failed");
+                                    accordion.setExpandedPane(connectPane);
+                                }
+                                    
 			}
 
 			@Override
