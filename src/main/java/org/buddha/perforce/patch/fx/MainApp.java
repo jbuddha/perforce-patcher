@@ -32,12 +32,11 @@ public class MainApp extends Application {
             URL iconURL = MainApp.class.getResource("/images/logo.png");
             java.awt.Image image = new ImageIcon(iconURL).getImage();
             Class clazz1 = Class.forName("com.apple.eawt.Application");
-            Method method = clazz1.getMethod("getApplication", null);
-            Object o = method.invoke(clazz1, null);
+            Method method = clazz1.getMethod("getApplication", (Class[]) null);
+            Object o = method.invoke(clazz1, (Object[]) null);
             Method m2 = o.getClass().getMethod("setDockIconImage", java.awt.Image.class);
             m2.invoke(o, image);
-            //com.apple.eawt.Application.getApplication().setDockIconImage(image);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // Won't work on Windows or Linux.
         }
         stage.show();
