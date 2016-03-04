@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.buddha</groupId>
-    <artifactId>perforce-patch-util</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>perforce-patcher</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>perforce-patch-util</name>
@@ -16,7 +16,7 @@
 
     <organization>
         <!-- Used as the 'Vendor' for JNLP generation -->
-        <name>Your Organisation</name>
+        <name>Buddha</name>
     </organization>
 
     <build>
