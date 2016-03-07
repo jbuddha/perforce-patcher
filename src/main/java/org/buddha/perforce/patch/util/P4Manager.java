@@ -9,6 +9,7 @@ import com.perforce.p4java.client.*;
 import com.perforce.p4java.client.IClientViewMapping;
 import com.perforce.p4java.client.IClientSummary.IClientOptions;
 import com.perforce.p4java.core.IChangelist;
+import com.perforce.p4java.core.IChangelistSummary;
 import com.perforce.p4java.core.IMapEntry.EntryType;
 import com.perforce.p4java.core.file.FileAction;
 import static com.perforce.p4java.core.file.FileAction.ADD;
@@ -24,7 +25,7 @@ import com.perforce.p4java.impl.mapbased.client.Client;
 import com.perforce.p4java.server.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.buddha.perforce.patch.Config;
@@ -223,9 +224,41 @@ public class P4Manager {
         if (changelistFiles != null) {
             if (remember) {
                 prefs.putInt(Config.P4CHANGELIST_KEY, changeListId);
+				Config.P4CHANGELIST = changeListId;
                 prefs.sync();
             }
         }
         return changelistFiles;
     }
+	
+	public static String[] getWorkspaces() throws ConnectionException, RequestException, AccessException {
+		List<IClientSummary> clients = P4Manager.server.getClients(username, null, 0);
+		String[] clientArray = new String[clients.size()];
+		int i = 0;
+		for(IClientSummary client: clients) {
+			clientArray[i++] = client.getName();
+		}
+		return clientArray;
+	}
+	
+	public static Map<String, ArrayList<String>> getPendingChangeLists() throws Exception {
+		List<IChangelistSummary> changelists = P4Manager.server.getChangelists(0, null, null, username, false, false, true, false);
+		int i = 0;
+		int[] array = new int[changelists.size()];
+		Map<String, ArrayList<String>> changelistMap = new HashMap<>();
+		for(IChangelistSummary changelist: changelists) {
+			String cl = ""+changelist.getId();
+			if(changelist.getDescription().length() > 0)
+				cl = cl + "-" + changelist.getDescription().trim();
+			if(changelistMap.containsKey(changelist.getClientId()))
+				changelistMap.get(changelist.getClientId()).add(cl);
+			else {
+				ArrayList<String> list = new ArrayList<>();
+				list.add(cl);
+				changelistMap.put(changelist.getClientId(), list);
+			}
+			
+		}
+		return changelistMap;
+	}
 }

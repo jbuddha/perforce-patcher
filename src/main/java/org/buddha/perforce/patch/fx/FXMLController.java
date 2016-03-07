@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -22,6 +23,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -62,10 +65,10 @@ public class FXMLController implements Initializable {
     private Button signInButton;
 
     @FXML
-    private TextField workspaceField;
+    private ChoiceBox workspaceField;
 
     @FXML
-    private TextField changeListField;
+    private ChoiceBox changeListField;
 
     @FXML
     private Button generatePatchButton;
@@ -79,7 +82,9 @@ public class FXMLController implements Initializable {
     private IClient client;
     private Task worker;
     List<Item> items;
-
+	private Map<String, ArrayList<String>> changelists;
+	private String[] workspaces;
+	
     @FXML
     private void handleSignInButtonAction(ActionEvent event) throws InterruptedException {
         try {
@@ -137,6 +142,15 @@ public class FXMLController implements Initializable {
         p4PortField.setText(Config.P4PORT);
         userNameField.setText(Config.P4USER);
         passwordField.setText(Config.P4PASSWORD);
+		workspaceField.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+			@Override
+			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+				if(changelists != null && changelists.containsKey(newValue)) {
+					changeListField.getItems().setAll(changelists.get(newValue));
+					changeListField.getSelectionModel().selectFirst();
+				}
+			}
+		});
     }
 
     public Task createPatchWorker() {
@@ -166,14 +180,14 @@ public class FXMLController implements Initializable {
             @Override
             protected Object call() {
                 try {
-                    updateMessage("Fetching Workspace: " + workspaceField.getText());
-                    client = P4Manager.getClient(workspaceField.getText());
+                    updateMessage("Fetching Workspace: " + workspaceField.getValue().toString());
+                    client = P4Manager.getClient(workspaceField.getValue().toString());
                     updateProgress(0.1, 1.0);
 
                     Mapping map = new Mapping(client);
                     items = new ArrayList<>();
                     updateMessage("Gathering Files");
-                    List<IFileSpec> files = P4Manager.getChangelistFiles(Integer.parseInt(changeListField.getText()));
+                    List<IFileSpec> files = P4Manager.getChangelistFiles(Integer.parseInt(changeListField.getValue().toString().split("-")[0]));
                     updateProgress(0.2, 1.0);
                     double d = 0.7 / files.size();
                     double p = 0.2;
@@ -201,6 +215,7 @@ public class FXMLController implements Initializable {
 
     public Task createLoginWorker() {
         return new Task() {
+			
             @Override
             protected void succeeded() {
                 if (getProgress() > 0.1) {
@@ -215,19 +230,24 @@ public class FXMLController implements Initializable {
             @Override
             public Void call() {
                 updateMessage("Logging In");
-                updateProgress(5, 10);
+                updateProgress(1, 10);
                 try {
                     updateMessage("Connecting to " + p4PortField.getText() + " as " + userNameField.getText());
                     P4Manager.connect(p4PortField.getText(), userNameField.getText(), passwordField.getText());
                     updateMessage("Login Success");
+					updateProgress(5, 10);
+					updateMessage("Fetching Pending Changelists");
+					changelists = P4Manager.getPendingChangeLists();
+					workspaces = (String[]) changelists.keySet().toArray(new String[0]);
                     updateProgress(10, 10);
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             changeListField.setDisable(false);
                             workspaceField.setDisable(false);
-                            workspaceField.setText(Config.P4CLIENT);
-                            changeListField.setText("" + Config.P4CHANGELIST);
+							workspaceField.getItems().addAll(workspaces);
+							changeListField.getItems().addAll(changelists.get(Config.P4CLIENT));
+                            workspaceField.setValue(Config.P4CLIENT);
                             generatePatchButton.setDisable(false);
                             userNameField.setDisable(true);
                             passwordField.setDisable(true);
