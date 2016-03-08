@@ -14,9 +14,7 @@ Generates Patch files for Perforce Pending changelists
 Upon opening the application you will be presented with the login screen. 
 ![Login Screen](https://farm2.staticflickr.com/1626/25596793045_91c403dfd9_z.jpg) 
 
-Login with your regular perfoce credentials, Deselct Remember me, if you don't want to store the data entered by you locally. By leaving the default value your credentials will be saved in the application cache so that you need not enter it again.
-
-If the login is successful, you will be taken to the next screen otherwise check the Log pane for error.
+Login with your regular perfoce credentials, Deselct Remember me, if you don't want to store the data entered by you locally. By leaving the default value your credentials will be saved in the application cache so that you need not enter it again.If the login is successful, you will be taken to the next screen otherwise check the Log pane for error.
 ![Generate Patch](https://farm2.staticflickr.com/1501/25229331639_f3324f01b4_z.jpg) 
 
 Select the local perforce workspace name and the change list id and click Generate Patch button and save the file at your preferred location through the Save dialog which popsup.
