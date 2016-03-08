@@ -2,6 +2,7 @@
 <actions>
         <action>
             <actionName>run</actionName>
+            <preAction>build-with-dependencies</preAction>
             <goals>
                 <goal>clean</goal>
                 <goal>package</goal>

@@ -119,7 +119,7 @@ public class FXMLController implements Initializable {
     }
 	
 	@FXML
-    private void handleClickGithubRepoLink(ActionEvent event) {
+    private void handleClickForkMeOnGithub(ActionEvent event) {
 		try {
 			java.awt.Desktop.getDesktop().browse(new URI("https://github.com/jbuddha/perforce-patcher/"));
 		} catch (IOException | URISyntaxException ex) {
