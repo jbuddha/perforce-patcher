@@ -6,7 +6,7 @@ import java.util.List;
 import org.buddha.perforce.patch.Item;
 
 /**
- * Reusable utilities
+ * Reusable utilities for Strings
  *
  * @author jbuddha
  */

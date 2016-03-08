@@ -49,7 +49,7 @@ public final class Mapping {
         return l;
     }
 
-    public String findRight(String remotePath) {
+    protected String findRight(String remotePath) {
         String left = findLeft(remotePath);
         String residualLeft = remotePath.replace(left, "");
         return map.get(left) + residualLeft;

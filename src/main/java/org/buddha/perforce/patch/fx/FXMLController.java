@@ -11,20 +11,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-import static java.util.prefs.Preferences.userNodeForPackage;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,9 +35,15 @@ import org.buddha.perforce.patch.Item;
 import org.buddha.perforce.patch.util.Mapping;
 import org.buddha.perforce.patch.util.P4Manager;
 import org.buddha.perforce.patch.Config;
+import org.buddha.perforce.patch.util.PreferenceCache;
 import org.buddha.perforce.patch.util.StringUtils;
 import static org.buddha.perforce.patch.util.StringUtils.concatItems;
 
+/**
+ * Controller for all the UI operations
+ * 
+ * @author jbuddha
+ */
 public class FXMLController implements Initializable {
 
     @FXML
@@ -81,15 +87,16 @@ public class FXMLController implements Initializable {
 
     private IClient client;
     private Task worker;
-    List<Item> items;
+    private List<Item> items;
 	private Map<String, ArrayList<String>> changelists;
 	private String[] workspaces;
+	PreferenceCache prefs = PreferenceCache.getInstance();
 	
     @FXML
     private void handleSignInButtonAction(ActionEvent event) throws InterruptedException {
         try {
-            worker = createLoginWorker();
-            worker.messageProperty().addListener(loggerListener());
+            worker = getLoginWorker();
+            worker.messageProperty().addListener(getLoggerListener());
             Thread thread = new Thread(worker);
             thread.setDaemon(true);
             thread.start();
@@ -100,37 +107,29 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void handleGeneratePatchButtonAction(ActionEvent event) throws ConnectionException, RequestException, AccessException, InterruptedException {
-        worker = createPatchWorker();
-        worker.messageProperty().addListener(loggerListener());
+        worker = getPatchWorker();
+        worker.messageProperty().addListener(getLoggerListener());
         new Thread(worker).start();
     }
 
     @FXML
     private void handleRemember(ActionEvent event) throws ConnectionException, RequestException, AccessException, InterruptedException {
-        P4Manager.remember(remember.isSelected());
+        prefs.persist(remember.isSelected());
         console.appendText("Remember Setting: " + remember.isSelected() + System.lineSeparator());
     }
-
-    private ChangeListener<String> loggerListener() {
-        return new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                accordion.setExpandedPane(logPane);
-                synchronized (FXMLController.class) {
-                    console.appendText(t1 + System.lineSeparator());
-                }
-            }
-        };
+	
+	@FXML
+    private void handleClickGithubRepoLink(ActionEvent event) {
+		try {
+			java.awt.Desktop.getDesktop().browse(new URI("https://github.com/jbuddha/perforce-patcher/"));
+		} catch (IOException | URISyntaxException ex) {
+			Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+		}
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        Preferences prefs = userNodeForPackage(MainApp.class);
-        Config.P4CHANGELIST = prefs.getInt(Config.P4CHANGELIST_KEY, 0);
-        Config.P4USER = prefs.get(Config.P4USER_KEY, "");
-        Config.P4PASSWORD = prefs.get(Config.P4PASSWORD_KEY, "");
-        Config.P4CLIENT = prefs.get(Config.P4CLIENT_KEY, "");
-        Config.P4PORT = prefs.get(Config.P4PORT_KEY, "");
+		
         accordion.setExpandedPane(connectPane);
         signInButton.disableProperty().bind(Bindings.equal("", p4PortField.textProperty())
                 .or(Bindings.equal("", userNameField.textProperty()))
@@ -139,9 +138,9 @@ public class FXMLController implements Initializable {
         changeListField.setDisable(true);
         workspaceField.setDisable(true);
         generatePatchButton.setDisable(true);
-        p4PortField.setText(Config.P4PORT);
-        userNameField.setText(Config.P4USER);
-        passwordField.setText(Config.P4PASSWORD);
+        p4PortField.setText(prefs.getP4port());
+        userNameField.setText(prefs.getUsername());
+        passwordField.setText(prefs.getPassword());
 		workspaceField.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
 			@Override
 			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -153,13 +152,25 @@ public class FXMLController implements Initializable {
 		});
     }
 
-    public Task createPatchWorker() {
+	private ChangeListener<String> getLoggerListener() {
+        return new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
+                accordion.setExpandedPane(logPane);
+                synchronized (FXMLController.class) {
+                    console.appendText(t1 + System.lineSeparator());
+                }
+            }
+        };
+    }
+	
+    public Task getPatchWorker() {
         return new Task() {
 
             @Override
             protected void succeeded() {
                 FileChooser fileChooser = new FileChooser();
-                fileChooser.setInitialFileName(Config.P4CHANGELIST + ".diff");
+                fileChooser.setInitialFileName(prefs.getChangelist() + ".diff");
                 fileChooser.setTitle("Save Patch");
                 File file = fileChooser.showSaveDialog(Config.STAGE);
                 String out = concatItems(items, System.lineSeparator() + System.lineSeparator());
@@ -213,7 +224,7 @@ public class FXMLController implements Initializable {
         };
     }
 
-    public Task createLoginWorker() {
+    public Task getLoginWorker() {
         return new Task() {
 			
             @Override
@@ -236,7 +247,8 @@ public class FXMLController implements Initializable {
                     P4Manager.connect(p4PortField.getText(), userNameField.getText(), passwordField.getText());
                     updateMessage("Login Success");
 					updateProgress(5, 10);
-					updateMessage("Fetching Pending Changelists");
+					Thread.sleep(100);
+					updateMessage("Fetching Pending Changelists & Workspaces");
 					changelists = P4Manager.getPendingChangeLists();
 					workspaces = (String[]) changelists.keySet().toArray(new String[0]);
                     updateProgress(10, 10);
@@ -246,8 +258,14 @@ public class FXMLController implements Initializable {
                             changeListField.setDisable(false);
                             workspaceField.setDisable(false);
 							workspaceField.getItems().addAll(workspaces);
-							changeListField.getItems().addAll(changelists.get(Config.P4CLIENT));
-                            workspaceField.setValue(Config.P4CLIENT);
+							if(workspaceField.getItems().contains(prefs.getWorkspace())) {
+								workspaceField.setValue(prefs.getWorkspace());
+							}
+							else
+							{
+								if(workspaces.length > 0)
+									workspaceField.getSelectionModel().selectFirst();
+							}
                             generatePatchButton.setDisable(false);
                             userNameField.setDisable(true);
                             passwordField.setDisable(true);
