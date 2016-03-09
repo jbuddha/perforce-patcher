@@ -62,15 +62,16 @@
 					<content>
 						<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
 							<children>
-								<GridPane layoutX="21.4" layoutY="20.4" prefHeight="214.0" prefWidth="309.0" AnchorPane.bottomAnchor="41.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+								<GridPane layoutX="21.4" layoutY="20.4" prefHeight="273.0" prefWidth="330.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 									<columnConstraints>
-										<ColumnConstraints hgrow="SOMETIMES" maxWidth="162.0" minWidth="10.0" prefWidth="70.0" />
-										<ColumnConstraints hgrow="SOMETIMES" maxWidth="270.0" minWidth="10.0" prefWidth="218.0" />
+										<ColumnConstraints hgrow="SOMETIMES" maxWidth="162.0" minWidth="10.0" prefWidth="61.0" />
+										<ColumnConstraints hgrow="SOMETIMES" maxWidth="270.0" minWidth="10.0" prefWidth="249.0" />
 									</columnConstraints>
 									<rowConstraints>
 										<RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="24.0" vgrow="SOMETIMES" />
 										<RowConstraints maxHeight="244.0" minHeight="10.0" prefHeight="167.0" vgrow="SOMETIMES" />
 										<RowConstraints maxHeight="244.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="244.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
 									</rowConstraints>
 									<children>
 										<Label text="Creator" />
@@ -79,17 +80,17 @@
 										<TextArea editable="false" prefHeight="240.0" prefWidth="234.0" text="This application is designed and developed for a simple purpose of generating patch files of pending changes in changelist. &#10;&#10;Login with your regular perforce credentials, choose remember me if you want to store the information locally in your machine. Select the local perforce workspace name and the changelist id and click Generate Patch. &#10;&#10;Deselect Remember me, if you don't want to store the data entered by you locally. By leaving the default value your credentials will be saved in the application cache so that you need not enter it again. &#10;&#10;You will be logged out upon closing the application automatically. " wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 										<Label text="License" GridPane.rowIndex="2" />
 										<Label text="The MIT License (MIT)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      								<Button mnemonicParsing="false" onAction="#handleClickForkMeOnGithub" prefHeight="35.0" prefWidth="251.0" text="Fork Me On Github" GridPane.columnIndex="1" GridPane.rowIndex="3">
+      									<graphic>
+      										<ImageView fitHeight="27.0" preserveRatio="true">
+      											<image>
+      												<Image url="@../images/github.png" />
+      											</image>                            
+      										</ImageView>
+      									</graphic>   
+      								</Button>
 									</children>
 								</GridPane>
-								<Button layoutX="76.0" layoutY="220.0" mnemonicParsing="false" onAction="#handleClickForkMeOnGithub" prefHeight="37.0" prefWidth="179.0" text="Fork Me On Github">
-									<graphic>
-										<ImageView fitHeight="27.0" preserveRatio="true">
-											<image>
-												<Image url="@../images/github.png" />
-											</image>                            
-										</ImageView>
-									</graphic>   
-								</Button>
 							</children>
 						</AnchorPane>
 					</content>
