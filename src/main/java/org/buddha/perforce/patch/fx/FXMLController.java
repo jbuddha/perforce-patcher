@@ -138,18 +138,32 @@ public class FXMLController implements Initializable {
         changeListField.setDisable(true);
         workspaceField.setDisable(true);
         generatePatchButton.setDisable(true);
-        p4PortField.setText(prefs.getP4port());
-        userNameField.setText(prefs.getUsername());
-        passwordField.setText(prefs.getPassword());
-		workspaceField.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-			@Override
-			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-				if(changelists != null && changelists.containsKey(newValue)) {
-					changeListField.getItems().setAll(changelists.get(newValue));
-					changeListField.getSelectionModel().selectFirst();
-				}
-			}
-		});
+        if (!MainApp.options.isEmpty()) {
+            try {
+            p4PortField.setText(MainApp.options.get("-p").toString());
+            } catch (Exception e) {
+                console.appendText("Unable to get port from command line.\n");
+            }
+            try {
+                userNameField.setText(MainApp.options.get("-u").toString());
+            } catch (Exception e) {
+                console.appendText("Unable to get user from command line.\n");
+            }
+             
+        } else {
+            p4PortField.setText(prefs.getP4port());
+            userNameField.setText(prefs.getUsername());
+            passwordField.setText(prefs.getPassword());
+        }
+	workspaceField.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                if(changelists != null && changelists.containsKey(newValue)) {
+                    changeListField.getItems().setAll(changelists.get(newValue));
+                    changeListField.getSelectionModel().selectFirst();
+                }
+            }
+	});
     }
 
 	private ChangeListener<String> getLoggerListener() {

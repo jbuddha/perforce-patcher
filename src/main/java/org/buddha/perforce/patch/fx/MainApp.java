@@ -2,6 +2,7 @@ package org.buddha.perforce.patch.fx;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.HashMap;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.event.EventHandler;
@@ -14,8 +15,11 @@ import javafx.stage.WindowEvent;
 import javax.swing.ImageIcon;
 import org.buddha.perforce.patch.util.P4Manager;
 import org.buddha.perforce.patch.Config;
+import org.buddha.perforce.patch.util.StringUtils;
 
 public class MainApp extends Application {
+    
+    static HashMap options = new HashMap();
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -61,6 +65,7 @@ public class MainApp extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        options = StringUtils.parseArgs(args);
         launch(args);
     }
 
