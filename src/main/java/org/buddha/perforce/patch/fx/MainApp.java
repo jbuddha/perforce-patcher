@@ -1,5 +1,6 @@
 package org.buddha.perforce.patch.fx;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class MainApp extends Application {
             Object o = method.invoke(clazz1, (Object[]) null);
             Method m2 = o.getClass().getMethod("setDockIconImage", java.awt.Image.class);
             m2.invoke(o, image);
-        } catch (RuntimeException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             // Won't work on Windows or Linux.
         }
         stage.show();

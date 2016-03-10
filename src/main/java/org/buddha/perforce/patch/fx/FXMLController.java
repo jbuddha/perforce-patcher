@@ -90,7 +90,7 @@ public class FXMLController implements Initializable {
     private List<Item> items;
 	private Map<String, ArrayList<String>> changelists;
 	private String[] workspaces;
-	PreferenceCache prefs = PreferenceCache.getInstance();
+	private PreferenceCache prefs = PreferenceCache.getInstance();
 	
     @FXML
     private void handleSignInButtonAction(ActionEvent event) throws InterruptedException {
@@ -119,7 +119,7 @@ public class FXMLController implements Initializable {
     }
 	
 	@FXML
-    private void handleClickGithubRepoLink(ActionEvent event) {
+    private void handleClickForkMeOnGithub(ActionEvent event) {
 		try {
 			java.awt.Desktop.getDesktop().browse(new URI("https://github.com/jbuddha/perforce-patcher/"));
 		} catch (IOException | URISyntaxException ex) {

@@ -20,3 +20,5 @@ Login with your regular perfoce credentials, Deselct Remember me, if you don't w
 Select the local perforce workspace name and the change list id and click Generate Patch button and save the file at your preferred location through the Save dialog which popsup.
 
 You will be logged out upon closing the application automatically.
+
+Go To this page for more detailed explanation: [Blog Post](http://controlspace.info/2016/03/08/patch-utility-for-perforce/)
