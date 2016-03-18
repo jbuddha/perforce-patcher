@@ -2,6 +2,7 @@ package org.buddha.perforce.patch.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.List;
 import org.buddha.perforce.patch.Item;
 
@@ -36,5 +37,31 @@ public class StringUtils {
         StringWriter writer = new StringWriter();
         ex.printStackTrace(new PrintWriter(writer));
         return writer.toString();
+    }
+    
+    public static HashMap parseArgs(String[] args) {
+        HashMap results = new HashMap();
+        for (int i = 0; i <= args.length - 1; i++) {
+            String value = "";
+            if (args[i].indexOf("-") == 0) {
+                if (args[i].length() == 2) {
+                    try {
+                        value = args[i+1];
+                    } catch (Exception e) {
+                        System.out.println("Unable to get value after flag '" + args[i] + "'" );
+                    }
+                } else if (args[i].length() > 2) {
+                    value = args[i].substring(2);
+                } else if (args[i].length() == 1) {
+                    System.out.println("Invalid flag");
+                }
+                if (args[i].charAt(1) == 'p') {
+                    results.put("-p", value);
+                } else if (args[i].charAt(1) == 'u') {
+                    results.put("-u", value);
+                }
+            }       
+        }
+        return results;
     }
 }
