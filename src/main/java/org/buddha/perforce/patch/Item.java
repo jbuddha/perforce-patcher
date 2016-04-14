@@ -27,20 +27,26 @@ public class Item {
 
     private final FileAction action;
 
+    private boolean omitBorderSpaces = true;
+    
     private final List<String> remoteContent;
     private final List<String> localContent;
 
-    public Item(IFileSpec fileSpec, Mapping map) throws IOException, ConnectionException, RequestException, AccessException {
+    public Item(IFileSpec fileSpec, Mapping map, boolean omitBorderSpaces) throws IOException, ConnectionException, RequestException, AccessException {
         remotePath = fileSpec.getPath(FilePath.PathType.DEPOT).getPathString();
         localPath = map.findLocalPath(fileSpec.getPath(FilePath.PathType.DEPOT).getPathString());
         action = fileSpec.getAction();
-
+        this.omitBorderSpaces = omitBorderSpaces;
         remoteContent = P4Manager.getRemoteContent(fileSpec);
         localContent = P4Manager.getLocalContent(fileSpec, map);
     }
 
     public List<String> getUnifiedDiff(int context) {
-        Patch<String> diff = DiffUtils.diff(remoteContent, localContent);
+        Patch<String> diff;
+        if(omitBorderSpaces)
+            diff = DiffUtils.diff(remoteContent, localContent, new TrimEqualizer<String>());
+        else
+            diff = DiffUtils.diff(remoteContent, localContent);
         // purposefully setting local path also as remote path
         return DiffUtils.generateUnifiedDiff(remotePath, remotePath, remoteContent, diff, context);
     }

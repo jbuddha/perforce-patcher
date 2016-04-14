@@ -84,6 +84,9 @@ public class FXMLController implements Initializable {
 
     @FXML
     private CheckBox remember;
+    
+    @FXML
+    private CheckBox trimCheckbox;
 
     private IClient client;
     private Task worker;
@@ -220,7 +223,7 @@ public class FXMLController implements Initializable {
                     for (IFileSpec fileSpec : files) {
                         String[] pathStrings = fileSpec.getPath(FilePath.PathType.DEPOT).getPathString().split("/");
                         updateMessage("Analysing: " + pathStrings[pathStrings.length - 1]);
-                        Item item = new Item(fileSpec, map);
+                        Item item = new Item(fileSpec, map, trimCheckbox.isSelected());
                         items.add(item);
                         p += d;
                         updateProgress(p, 1.0);

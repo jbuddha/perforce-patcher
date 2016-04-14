@@ -42,9 +42,10 @@
 							<children>
 								<Label layoutX="32.0" layoutY="58.0" text="Workspace" />
 								<Label layoutX="32.0" layoutY="103.0" text="Changelist" />
-								<Button fx:id="generatePatchButton" layoutX="31.0" layoutY="177.0" mnemonicParsing="false" onAction="#handleGeneratePatchButtonAction" prefHeight="95.0" prefWidth="309.0" text="Generate Patch" AnchorPane.bottomAnchor="34.60000000000002" AnchorPane.leftAnchor="31.0" AnchorPane.rightAnchor="31.59999999999991" AnchorPane.topAnchor="177.0" />
+								<Button fx:id="generatePatchButton" layoutX="27.0" layoutY="152.0" mnemonicParsing="false" onAction="#handleGeneratePatchButtonAction" prefHeight="53.0" prefWidth="269.0" text="Generate Patch" />
 								<ChoiceBox fx:id="workspaceField" layoutX="113.0" layoutY="53.0" prefHeight="27.0" prefWidth="184.0" />
 								<ChoiceBox fx:id="changeListField" layoutX="113.0" layoutY="98.0" prefHeight="27.0" prefWidth="184.0" />
+                        <CheckBox fx:id="trimCheckbox" layoutX="68.0" layoutY="227.0" mnemonicParsing="false" selected="true" text="Omit Leading &amp; Trailing Spaces" />
 							</children>
 						</AnchorPane>
 					</content>
