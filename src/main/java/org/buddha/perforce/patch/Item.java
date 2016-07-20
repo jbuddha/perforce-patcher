@@ -11,6 +11,7 @@ import com.perforce.p4java.impl.generic.core.file.FilePath;
 import difflib.DiffUtils;
 import difflib.Patch;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import org.buddha.perforce.patch.util.StringUtils;
 
@@ -29,8 +30,8 @@ public class Item {
 
     private boolean omitBorderSpaces = true;
     
-    private final List<String> remoteContent;
-    private final List<String> localContent;
+    private List<String> remoteContent;
+    private List<String> localContent;
 
     public Item(IFileSpec fileSpec, Mapping map, boolean omitBorderSpaces) throws IOException, ConnectionException, RequestException, AccessException {
         remotePath = fileSpec.getPath(FilePath.PathType.DEPOT).getPathString();
@@ -43,6 +44,12 @@ public class Item {
 
     public List<String> getUnifiedDiff(int context) {
         Patch<String> diff;
+        if (localContent == null) {
+            localContent = new ArrayList<String>();
+        }
+        if (remoteContent == null) {
+            remoteContent = new ArrayList<String>();
+        }
         if(omitBorderSpaces)
             diff = DiffUtils.diff(remoteContent, localContent, new TrimEqualizer<String>());
         else
