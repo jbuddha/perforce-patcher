@@ -26,4 +26,4 @@ For example:
 `java -jar perforce-patcher.jar -p workshop.perforce.com:1666 -u guest`
 
 
-Go To this page for more detailed explanation: [Patch Utilitiy for Perforce](#http://controlspace.info/2016/03/patch-utility-for-perforce/)
+Go To this page for more detailed explanation: <a href="http://controlspace.info/2016/03/patch-utility-for-perforce/">Patch Utilitiy for Perforce</a>
